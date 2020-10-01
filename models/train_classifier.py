@@ -33,7 +33,7 @@ import pickle
 
 def load_data(database_filepath):
     # load data from database
-    database_filename_ext = 'sqlite:///' + database_filename
+    database_filename_ext = 'sqlite:///' + database_filepath
     engine = create_engine(database_filename_ext)
     df = pd.read_sql_table('disaster_response_data', engine)
 
@@ -82,9 +82,9 @@ def build_model():
             #'vectorizer__max_df': (0.5, 0.75, 1.0),
             #'vectorizer__max_features': (None, 5000, 10000),
             #'tfidf__use_idf': (True, False),
-            'clf__estimator__leaf_size': [20, 30, 40],
-            #'clf__estimator__metric': ('minkowski', 'mahalanobis'),
-            'clf__estimator__n_neighbors': [4, 5, 6],
+            'clf__estimator__leaf_size': [20, 30],
+            #'clf__estimator__metric': ('minkowski', 'chebyshev'),
+            'clf__estimator__n_neighbors': [4, 5],
             #'clf__estimator__weights': ('uniform', 'distance')
         }
 
