@@ -7,7 +7,7 @@ from nltk.tokenize import word_tokenize
 
 from flask import Flask
 from flask import render_template, request, jsonify
-from plotly.graph_objs import Bar
+from plotly.graph_objs import Bar, Pie
 from sklearn.externals import joblib
 from sqlalchemy import create_engine
 
@@ -39,13 +39,30 @@ model = joblib.load("../models/classifier.pkl")
 def index():
     
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
+    # Graph 1 data (given example):
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
+    # Graph 2 data: Distribution of Natural Disaster Messages
+    natural_disaster_counts = pd.Series({'Cold': int(df.cold.sum()), 
+                                      'Flood': int(df.floods.sum()),
+                                      'Storm': int(df.storm.sum()),
+                                      'Fire': int(df.fire.sum()),
+                                      'Earthquake': int(df.earthquake.sum())})
+    
+    natural_disaster_names = list(natural_disaster_counts.index)
+    
+    # Graph 3 data: Distribution of Help Requests/Help Offerings
+    request_offering_counts = pd.Series({'Requests': int(df.request.sum()), 
+                                       'Offerings': int(df.offer.sum())})
+    
+    request_offering_names = list(request_offering_counts.index)
+    
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
+    colors = ['lightslategray',] * 2
+    colors[1] = 'crimson'
     graphs = [
+        # First graph (given example):
         {
             'data': [
                 Bar(
@@ -61,6 +78,45 @@ def index():
                 },
                 'xaxis': {
                     'title': "Genre"
+                }
+            }
+        },
+        # Second graph: Distribution of Natural Disaster Messages
+        {
+            'data': [
+                Pie(
+                    labels=natural_disaster_names,
+                    values=natural_disaster_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Natural Disaster Messages',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Type of Disaster"
+                }
+            }
+        },
+        # Third graph: Distribution of Help Requests/Help Offerings
+        {
+            'data': [
+                Bar(
+                    x=request_offering_names,
+                    y=request_offering_counts,
+                    marker_color=colors
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Help Requests/Help Offerings ',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Requests/Help"
                 }
             }
         }
