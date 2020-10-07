@@ -35,10 +35,10 @@ If you want to install these modules in an environment, you can run the installa
 ## Repository Contents:
 
 - app (folder):
-        - templates (folder): HTML templates for the Flask web app.
-                            - go.html
-                            - master.html
-        - run.py: Script that builds the web app, connects to the database and deploys the classification model. 
+    - templates (folder): HTML templates for the Flask web app.
+        - go.html
+        - master.html
+    - run.py: Script that builds the web app, connects to the database and deploys the classification model. 
         
 - data (folder):
     - DisasterResponse.db: Database with **'disaster_response_data'** SQL table used in the dashboard and the ML model training.
