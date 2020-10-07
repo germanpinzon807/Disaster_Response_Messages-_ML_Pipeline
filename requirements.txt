@@ -1,0 +1,10 @@
+pandas==1.0.1
+numpy==1.18.1
+re==2020.7.14
+sys
+sqlalchemy==1.3.13 
+sklearn==0.19.1
+nltk==3.4.5
+pickle
+json
+plotly==2.0.15
