@@ -1,10 +1,13 @@
+# Import modules:
 import json
 import plotly
 import pandas as pd
 
+# for tokenization:
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 
+# for web app building:
 from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar, Pie
@@ -15,6 +18,19 @@ from sqlalchemy import create_engine
 app = Flask(__name__)
 
 def tokenize(text):
+    """
+    Tokenizer and lemmatizer function for texts in English language.
+        
+    Params
+    --------
+        text (str): 
+            String to be tokenized.
+                                            
+    Returns
+    --------
+        tokens (list): 
+            List of the clean tokens found in text.  
+    """  
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
 
@@ -37,8 +53,19 @@ model = joblib.load("../models/classifier.pkl")
 @app.route('/')
 @app.route('/index')
 def index():
-    
-    # extract data needed for visuals
+    """
+    Plots data preparation and dashboard building.
+        
+    Params
+    --------
+        
+        
+    Returns
+    --------
+         (HTML template render): 
+            HTML render of the dashboard page.  
+    """    
+    # Step 1. extract data needed for visuals:
     # Graph 1 data (given example):
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
@@ -58,7 +85,7 @@ def index():
     
     request_offering_names = list(request_offering_counts.index)
     
-    # create visuals
+    # Step 2. create visuals:
     colors = ['lightslategray',] * 2
     colors[1] = 'crimson'
     graphs = [
@@ -122,11 +149,11 @@ def index():
         }
     ]
     
-    # encode plotly graphs in JSON
+    # Step 3. encode plotly graphs in JSON:
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
     
-    # render web page with plotly graphs
+    # Step 4. render web page with plotly graphs:
     return render_template('master.html', ids=ids, graphJSON=graphJSON)
 
 
@@ -140,7 +167,7 @@ def go():
     classification_labels = model.predict([query])[0]
     classification_results = dict(zip(df.columns[4:], classification_labels))
 
-    # This will render the go.html Please see that file. 
+    # This will render the go.html. 
     return render_template(
         'go.html',
         query=query,
