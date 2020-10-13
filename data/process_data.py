@@ -68,7 +68,9 @@ def load_data(messages_filepath, categories_filepath):
 
 def clean_data(df):
     """
-    Check and drop any duplicates that may be present in the dataframe provided by load_data() function.
+    Check and drop any duplicates and NaN values that may be present in the dataframe 
+    provided by load_data() function. Also removes unnecesary columns and convert all
+    int values to binary.
         
     Params
     --------
@@ -78,7 +80,8 @@ def clean_data(df):
     Returns
     --------
         df (Pandas DataFrame): 
-            Dataframe provided by load_data() function with no duplicates.  
+            Dataframe provided by load_data() function with no duplicates, no NaN values and without 
+            unnecesary columns for model training.  
     """    
     # Step 6. Remove duplicates
         # check number of duplicates
@@ -89,6 +92,33 @@ def clean_data(df):
     
         # check number of duplicates after the drop
     #df.duplicated(keep='last').sum()
+    
+    # Step 7. Remove unnecesary columns
+        # I am not going to use the original messages, so let´s drop the 'original' column:
+    df.drop(['original'], axis=1, inplace = True)
+  
+    # Step 8. Remove NaNs 
+        # There is 138 messages that have no classification. Let's hold these as a test set for later prediction (df_test), 
+        # and split the messages that do have classification into features/target (validation) dataframes for model training                (df_train).
+    df_train = df[~(df.isnull().any(axis=1))]
+    df_test = df[df.isnull().any(axis=1)]    
+    df = df_train
+    
+    # Step 9. Convert values to binary
+        # Check if there is any value different to 1 or 0
+    #for column in df.iloc[:, 3:].columns:
+    #    print(column + ':')
+    #    print(df[column].unique())
+    #    print('---')
+    
+        # It seems that there are 2's in the 'related' column, let's see how many
+    #df[df.related == 2].shape
+    
+        # There are 139 rows with 2's. Since these 2's doesn't seem to be of use, let's convert them to 1's
+    df.loc[df['related'] == 2, 'related'] == 1  
+    
+        # Check if there are any 2's left in the df
+    #df[df.related == 2].shape
     
     return df   
 
@@ -108,7 +138,7 @@ def save_data(df, database_filename):
     --------
  
     """
-    # Step 7. Database setup and table creation:
+    # Step 10. Database setup and table creation:
     database_filename_ext = 'sqlite:///' + database_filename
     engine = create_engine(database_filename_ext)
     df.to_sql('disaster_response_data' , engine, index=False) 
