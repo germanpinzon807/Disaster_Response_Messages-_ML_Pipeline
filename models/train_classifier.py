@@ -57,15 +57,6 @@ def load_data(database_filepath):
     engine = create_engine(database_filename_ext)
     df = pd.read_sql_table('disaster_response_data', engine)
 
-    # I am not going to use the original messages, so let´s drop the 'original' column:
-    df.drop(['original'], axis=1, inplace = True)
-    # df.isnull().sum()
-
-    # There is 138 messages that have no classification. Let's hold these as a test set for later prediction (df_test), 
-    # and split the messages that do have classification into features/target (validation) dataframes for model training                (df_train).
-    df_train = df[~(df.isnull().any(axis=1))]
-    df_test = df[df.isnull().any(axis=1)]
-    
     # Messages and target dataframes
     X = df_train.iloc[:,1]
     Y = df_train.iloc[:, 3:]
