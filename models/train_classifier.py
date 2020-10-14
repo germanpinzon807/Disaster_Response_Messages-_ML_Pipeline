@@ -58,8 +58,8 @@ def load_data(database_filepath):
     df = pd.read_sql_table('disaster_response_data', engine)
 
     # Messages and target dataframes
-    X = df_train.iloc[:,1]
-    Y = df_train.iloc[:, 3:]
+    X = df.iloc[:,1]
+    Y = df.iloc[:, 3:]
     #X.head()
     #Y.head()
     
